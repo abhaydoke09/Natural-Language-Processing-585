@@ -35,7 +35,7 @@ def n_word_types(word_counts):
     using information from word_counts
     '''
     ## TODO: complete me!
-    pass
+    return len(word_counts.keys())
 
 
 def n_word_tokens(word_counts):
@@ -44,7 +44,7 @@ def n_word_tokens(word_counts):
     using information from word_counts
     '''
     ## TODO: complete me!
-    pass
+    return reduce(lambda x,y:x+y, word_counts.values())
 
 
 
