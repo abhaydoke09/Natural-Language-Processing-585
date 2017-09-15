@@ -119,8 +119,14 @@ class NaiveBayes:
           - the vocabulary seen so far (self.vocab)
           - the number of documents seen of each label (self.class_total_doc_counts)
         """
+        for word,count in bow.items():
+            self.class_word_counts[label][word]+=count
+            self.class_total_word_counts[label]+=count
+            self.vocab.add(word)
+        self.class_total_doc_counts[label]+=1
 
-        pass
+
+        
 
     def tokenize_and_update_model(self, doc, label):
         """
