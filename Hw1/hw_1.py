@@ -174,7 +174,7 @@ class NaiveBayes:
         label - either the positive or negative label
         alpha - float; pseudocount parameter
         """
-        pass
+        return sum([math.log(p_word_given_label_and_pseudocount(word, label, alpha)) for word in bow])
 
     def log_prior(self, label):
         """
@@ -182,7 +182,7 @@ class NaiveBayes:
 
         Returns the log prior of a document having the class 'label'.
         """
-        pass
+        return math.log(self.class_total_doc_counts[label]/(sum(self.class_total_doc_counts.values())))
 
     def unnormalized_log_posterior(self, bow, label, alpha):
         """
