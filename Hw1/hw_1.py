@@ -163,7 +163,7 @@ class NaiveBayes:
         Returns the probability of word given label wrt psuedo counts.
         alpha - pseudocount parameter
         """
-        return (self.class_word_counts[label][word] + alpha)/(self.class_total_word_counts[label]*(1 + alpha))
+        return (self.class_word_counts[label][word] + alpha)/(self.class_total_word_counts[label]+alpha*len(self.vocab))
 
     def log_likelihood(self, bow, label, alpha):
         """
@@ -174,7 +174,7 @@ class NaiveBayes:
         label - either the positive or negative label
         alpha - float; pseudocount parameter
         """
-        return sum([math.log(p_word_given_label_and_pseudocount(word, label, alpha)) for word in bow])
+        return sum([math.log(self.p_word_given_label_and_pseudocount(word, label, alpha)) for word in bow])
 
     def log_prior(self, label):
         """
@@ -191,7 +191,7 @@ class NaiveBayes:
         Computes the unnormalized log posterior (of doc being of class 'label').
         bow - a bag of words (i.e., a tokenized document)
         """
-        pass
+        return self.log_prior(label) + self.log_likelihood(bow, label, alpha)
 
     def classify(self, bow, alpha):
         """
@@ -202,7 +202,10 @@ class NaiveBayes:
         (depending on which resulted in the higher unnormalized log posterior)
         bow - a bag of words (i.e., a tokenized document)
         """
-        pass
+        pos = self.unnormalized_log_posterior(bow, POS_LABEL, alpha)
+        neg = self.unnormalized_log_posterior(bow, NEG_LABEL, alpha)
+
+        return POS_LABEL if pos > neg else NEG_LABEL
 
     def likelihood_ratio(self, word, alpha):
         """
@@ -210,7 +213,7 @@ class NaiveBayes:
 
         Returns the ratio of P(word|pos) to P(word|neg).
         """
-        pass
+        return self.p_word_given_label_and_pseudocount(word,POS_LABEL,alpha)/self.p_word_given_label_and_pseudocount(word,NEG_LABEL,alpha)
 
     def evaluate_classifier_accuracy(self, alpha):
         """
