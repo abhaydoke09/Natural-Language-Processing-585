@@ -2,6 +2,8 @@ from __future__ import division
 import sys,json,math
 import os
 import numpy as np
+from scipy import spatial
+
 
 def load_word2vec(filename):
     # Returns a dict containing a {word: numpy array for a dense word vector} mapping.
@@ -51,6 +53,9 @@ def cosine_similarity(word_dict1, word_dict2):
                 numerator += word_dict1[word]*word_dict2[word]
 
     return(numerator*1.0)/(norm1*norm2)
+
+def cosine_similarity_word2vec(vec1, vec2):
+    return 1 - spatial.distance.cosine(vec1, vec2)
 
 
 
