@@ -10,6 +10,13 @@ from pprint import pprint
 # NP -> NP PP
 # VP -> VP PP
 # """
+# lexicon = {
+#     'Noun': set(['cat', 'dog', 'table', 'food']),
+#     'Verb': set(['saw', 'loved', 'hated', 'attacked']),
+#     'Prep': set(['in', 'of', 'on', 'with']),
+#     'Det': set(['the', 'a']),
+# }
+
 grammar_text = """
 S -> NPZ VP
 S -> NP VBZ
@@ -31,6 +38,8 @@ lexicon = {
     'Det': set(['the', 'a']),
 }
 
+
+
 # Process the grammar rules.  You should not have to change this.
 grammar_rules = []
 
@@ -45,6 +54,8 @@ for line in grammar_text.strip().split("\n"):
 grammar_dict = {}
 for rule in grammar_rules:
     grammar_dict[rule[1]] = rule[0]
+
+
 
 possible_parents_for_children = {}
 for parent, (leftchild, rightchild) in grammar_rules:
@@ -99,7 +110,7 @@ def cky_acceptance(sentence):
     for j in range(1,N):
         for i in range(N-j):
             #pprint((i, i+j))
-            print("Updating for", (i, i+j+1))
+            #print("Updating for", (i, i+j+1))
             possible_left_positions = []
             possible_down_positions = []
             # for cellJ in range(i, i+j):
@@ -111,7 +122,7 @@ def cky_acceptance(sentence):
             for partition in range(i+j-i):
                 left_cell = (i, i+j-partition)
                 down_cell = (i+j-partition, i+j+1)
-                print left_cell, down_cell
+                #print left_cell, down_cell
                 for first_symbol in cells[left_cell]:
                     for second_symbol in cells[down_cell]:
                         #pprint((first_symbol, second_symbol))
@@ -184,18 +195,19 @@ def cky_parse(sentence):
             for cellI in range(i + 1, i + j + 1):
                 possible_down_positions.append((cellI, i + j + 1))
 
-            for left_cell in possible_left_positions:
-                for down_cell in possible_down_positions:
-                    for first_symbol in cells[left_cell]:
-                        for second_symbol in cells[down_cell]:
-                            # pprint((first_symbol, second_symbol))
-                            if (first_symbol, second_symbol) in grammar_dict:
-                                # print("Rule found")
-                                # pprint(grammar_dict[(first_symbol, second_symbol)])
-                                cells[(i, i + j + 1)].append(grammar_dict[(first_symbol, second_symbol)])
-                                path_dict[(i, i + j + 1, grammar_dict[(first_symbol, second_symbol)])] = \
-                                    ((left_cell[0], left_cell[1], first_symbol),
-                                     (down_cell[0], down_cell[1], second_symbol))
+            for partition in range(i + j - i):
+                left_cell = (i, i + j - partition)
+                down_cell = (i + j - partition, i + j + 1)
+                for first_symbol in cells[left_cell]:
+                    for second_symbol in cells[down_cell]:
+                    # pprint((first_symbol, second_symbol))
+                        if (first_symbol, second_symbol) in grammar_dict:
+                            # print("Rule found")
+                            # pprint(grammar_dict[(first_symbol, second_symbol)])
+                            cells[(i, i + j + 1)].append(grammar_dict[(first_symbol, second_symbol)])
+                            path_dict[(i, i + j + 1, grammar_dict[(first_symbol, second_symbol)])] = \
+                                ((left_cell[0], left_cell[1], first_symbol),
+                                 (down_cell[0], down_cell[1], second_symbol))
 
     if (0, N, 'S') in path_dict:
         print get_parsed_path((0, N, 'S'), path_dict, N, sentence)
